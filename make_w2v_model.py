@@ -4,9 +4,9 @@ from gensim.models import word2vec
 
 TRAIN_PATH      = "./data/wakati/train_w2v.txt"
 WAKATI_W2V_PATH = "./data/wakati/wakati_w2v.txt"
-MODEL_PATH_CNN  = "./data/w2v_model/model_cnn"
-MODEL_PATH_ALL  = "./data/w2v_model/model_all"
-UNIT            = 300
+MODEL_PATH_CNN  = "./data/model/w2v_model_cnn"
+MODEL_PATH_ALL  = "./data/model/w2v_model_all"
+UNIT            = 200
 
 if __name__ == '__main__':
     # CNN

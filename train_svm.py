@@ -7,25 +7,31 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.externals import joblib
 
 
-from make_train_data import MakeTrainData
+from functions import trace
+from vec_dict import VecDict
 
 
-TRAIN_DATA_PATH = "./data/train_dataset/mecab_w2v.pkl"
+#VEC_DICT_PATH    = "./data/train_dataset/w2v_dict.pkl"
+VEC_DICT_PATH    = "./data/train_dataset/w2v_dict_mini.pkl"
 
+SVM_MODEL = "./data/model/svm_mini.pkl"
 
 if __name__ == '__main__':
     # make data
-    mtd = MakeTrainData.load(TRAIN_DATA_PATH)
-    lab, vec = mtd.get_train_data()
+    trace("load train dataset")
+    vec_dict = VecDict.load(VEC_DICT_PATH)
+    lab, vec = vec_dict.get_train_data()
+    trace("finish!")
 
-    #data_train, data_test, label_train, label_test = train_test_split(vec, lab)
+    data_train, data_test, label_train, label_test = train_test_split(vec, lab)
 
     # train
-    #clf = svm.SVC()
-    #clf.fit(data_train, label_train)
+    clf = svm.SVC()
+    clf.fit(data_train, label_train)
 
     ## test
-    #pred = clf.predict(data_test)
-    #joblib.dump(clf, 'clf.pkl')
-    #print(classification_report(label_test, pred))
-    #print(accuracy_score(label_test, pred))
+    pred = clf.predict(data_test)
+    print(classification_report(label_test, pred))
+    print(accuracy_score(label_test, pred))
+    joblib.dump(clf, SVM_MODEL)
+    trace("save model")
