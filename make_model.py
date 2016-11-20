@@ -5,7 +5,7 @@ import os
 import MeCab
 from gensim.models import word2vec
 
-from util.functions import trace
+from util.functions import trace, check_directory
 
 
 UNIT        = 200
@@ -49,15 +49,6 @@ def wakati_all_text(path_list):
 def write_file(out_path, data):
     with open(out_path, "w") as f:
         f.write(data)
-
-def check_directory(path_list):
-    for path in path_list:
-        sp_path = path.split("/")
-        sp_path.pop()
-        dir_path = "/".join(sp_path)
-        if not os.path.isdir(dir_path):
-            os.makedirs(dir_path)
-
 
 if __name__ == '__main__':
 
