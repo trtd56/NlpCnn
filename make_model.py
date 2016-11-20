@@ -3,12 +3,16 @@
 
 import os
 import MeCab
+from gensim.models import word2vec
 
 from util.functions import trace
 
 
-TEXT_DIR   = "./data/text/"
-WAKATI_DIR = "./data/wakati/"
+UNIT        = 200
+
+TEXT_DIR    = "./data/text/"
+WAKATI_PATH = "./data/wakati/wakati.txt"
+MODEL_PATH  = "./data/model/w2v_model_" + str(UNIT)
 
 
 def get_text_file_path(text_dir_path):
@@ -42,15 +46,35 @@ def wakati_all_text(path_list):
         out += wakati_text(path)
     return out
 
-def write_file(out_path, wakati):
-    if not os.path.isdir(out_path):
-        os.makedirs(out_path)
-    with open(out_path+"wakati.txt", "w") as f:
-        f.write(wakati)
+def write_file(out_path, data):
+    with open(out_path, "w") as f:
+        f.write(data)
+
+def check_directory(path_list):
+    for path in path_list:
+        sp_path = path.split("/")
+        sp_path.pop()
+        dir_path = "/".join(sp_path)
+        if not os.path.isdir(dir_path):
+            os.makedirs(dir_path)
 
 
 if __name__ == '__main__':
 
+    trace("check directory")
+    dir_path = [WAKATI_PATH, MODEL_PATH]
+    check_directory(dir_path)
+
+    trace("read text file")
     path_list = get_text_file_path(TEXT_DIR)
     wakati    = wakati_all_text(path_list)
-    write_file(WAKATI_DIR, wakati)
+    write_file(WAKATI_PATH, wakati)
+    trace("save wakati file")
+
+    trace("load wakati file")
+    data = word2vec.Text8Corpus(WAKATI_PATH)
+    trace("train word2vec")
+    model = word2vec.Word2Vec(data, size=UNIT)
+    trace("save word2vec model")
+    model.save(MODEL_PATH)
+    trace("finish!")
