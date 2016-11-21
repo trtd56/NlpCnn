@@ -6,7 +6,7 @@ from datetime import datetime
 def trace(*args):
     now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
     x = " ".join([str(i) for i in args])
-    print(now+".... "+x, flush=True)
+    print(now+".... "+x)
 
 def check_directory(path_list):
     for path in path_list:

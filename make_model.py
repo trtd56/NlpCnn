@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*
 
 
-import os
+import os, codecs
 import MeCab
 from gensim.models import word2vec
 
@@ -31,7 +31,8 @@ def get_text_file_path(text_dir_path):
 def wakati_text(path):
     tagger = MeCab.Tagger("-Owakati")
     out = ""
-    for line in open(path, 'r'):
+    text = codecs.open(path,"r","utf-8").readlines()[2:] # Delete URL & date
+    for line in text:
         line = line.replace("\n","")
         if not len(line) == 0:
             text_sp = tagger.parse(line)

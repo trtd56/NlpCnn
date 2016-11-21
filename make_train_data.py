@@ -14,7 +14,7 @@ TEXT_DIR   = "./data/text/"
 CATEGORY   = {0:"dokujo-tsushin", 1:"it-life-hack", 2:"kaden-channel", 3:"livedoor-homme", 4:"movie-enter",
               5:"peachy",6:"smax",7:"sports-watch",8:"topic-news"}
 MODEL_PATH = "./data/model/w2v_model_" + str(UNIT)
-DATA_PATH  = "./data/train_data/w2v_data"
+DATA_PATH  = "./data/train_data/w2v_data/"
 
 
 def get_text_path_list(dir_path, category):
@@ -33,26 +33,26 @@ def get_vector(path, model):
         if not len(line) == 0:
             text_sp = tagger.parse(line)
             text_sp = text_sp.split()
-            try:
-                vec = np.array([model[word] for word in text_sp])
-                vec_list.append(vec)
-            except KeyError:
-                pass
-    return np.array(vec_list)
+            if not len(text_sp) == 0:
+                try:
+                    vec = np.array([model[word] for word in text_sp])
+                    vec = vec.mean(axis=0)
+                    vec_list.append(vec)
+                except KeyError:
+                    pass
+    return vec_list
 
-def make_train_data(model, text_dir, category):
-    feature = []
-    target  = []
+def make_train_data(model, text_dir, data_path, category):
     for i, c in category.items():
         path_list = get_text_path_list(text_dir, c)
+        feature = []
         for p in path_list:
             trace("infer", p)
             vec_list = get_vector(p, model)
-            lab_list = [i for num in range(len(vec_list))]
-            feature.append(vec_list)
-            target.append(lab_list)
-    data = {"x":feature, "t":target}
-    return data
+            if not len(vec_list) == 0:
+                feature.extend(vec_list)
+        trace("save ", c)
+        save_pickle(data_path+c,feature)
 
 def save_pickle(path, data):
     with open(path, mode='wb') as f:
@@ -61,8 +61,5 @@ def save_pickle(path, data):
 
 if __name__ == '__main__':
     model = word2vec.Word2Vec.load(MODEL_PATH)
-    data  = make_train_data(model, TEXT_DIR, CATEGORY)
     check_directory([DATA_PATH])
-    save_pickle(DATA_PATH, data)
-
-
+    make_train_data(model, TEXT_DIR, DATA_PATH, CATEGORY)
