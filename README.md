@@ -15,3 +15,6 @@ $ virtualenv -p `which python3` py34_nlp
 $ vim ~/.bashrc
 alias py34_nlp=". ~/venv/py34_nlp/bin/activate"
 ~~~~
+
+- CONSTANTS
+- JUMANN++をdockerで
