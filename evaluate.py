@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.externals import joblib
 
 from util.functions import trace, check_directory
-from util.cinstants import *
+from util.constants import *
 
 
 def load_pickle(path):
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         trace("load", data_path)
         dataset = []
         lab_set = []
-        for i, c in CATEGORY.items():
+        for i, c in enumerate(CATEGORY):
             trace("load", c)
             data = load_pickle(data_path+c)
             label = [i for d in range(len(data))]
@@ -42,20 +42,25 @@ if __name__ == '__main__':
         train_x, test_x, train_t, test_t = train_test_split(dataset, lab_set)
 
 
-        trace("training LR")
-        clf  = LogisticRegressionCV()
-        clf.fit(train_x, train_t)
+        if os.path.exists(clf_path):
+            trace("load LR clf")
+            clf = joblib.load(clf_path)
+        else:
+            trace("training LR")
+            clf  = LogisticRegressionCV()
+            clf.fit(train_x, train_t)
+            trace("save model")
+            joblib.dump(clf, clf_path)
+
         trace("LR predict")
-        pred = lr.predict(test_x)
+        pred = clf.predict(test_x)
         report = classification_report(test_t, pred)
+        report_list.append(report)
         trace("accuracy",accuracy_score(test_t, pred))
 
-        trace("save model")
-        joblib.dump(lr, clf_path)
-        report_list.append(report)
 
     for repo, path in zip(report_list, clf_path_list):
         trace(path)
-        trace("report\n",r)
+        trace("report\n", repo)
 
     trace("finish!")

@@ -4,7 +4,7 @@
 from gensim.models import word2vec
 
 from util.functions import trace, check_directory
-from util.cinstants import *
+from util.constants import *
 
 
 if __name__ == '__main__':

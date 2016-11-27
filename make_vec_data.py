@@ -7,8 +7,8 @@ from pyknp import Jumanpp
 from gensim.models import word2vec
 import numpy as np
 
-from util.functions import trace, check_directory
-from util.cinstants import *
+from util.functions import trace, check_directory, replace_head2jumanpp
+from util.constants import *
 
 Tagger  = MeCab.Tagger("-Owakati")
 Jumanpp = Jumanpp()
@@ -25,31 +25,33 @@ def get_vector(path, model, mode):
     vec_list = []
     for line in text:
         line = line.replace("\n","")
-        if not len(line) == 0:
-            if mode == "mecab":
+        text_sp = None
+        if mode == "mecab":
+            if not len(line) == 0:
                 text_sp = Tagger.parse(line)
                 text_sp = text_sp.split()
-            elif mode == "juman":
-                try:
-                    text_sp = Jumanpp.analysis(line)
-                    text_sp = " ".join([i.midasi for i in text_sp.mrph_list()])
-                except ValueError:
-                    text_sp = []
-            if not len(text_sp) == 0:
-                try:
-                    vec = np.array([model[word] for word in text_sp])
-                    vec = vec.mean(axis=0)
-                    vec_list.append(vec)
-                except KeyError:
-                    pass
+        elif mode == "juman":
+            line = replace_head2jumanpp(line)
+            if not len(line) == 0:
+                trace(line)
+                text_sp = Jumanpp.analysis(line)
+                text_sp = [i.midasi for i in text_sp.mrph_list()]
+        if text_sp:
+            try:
+                vec = np.array([model[word] for word in text_sp])
+                vec = vec.mean(axis=0)
+                vec_list.append(vec)
+            except KeyError as e:
+                trace("KeyError", e)
     return vec_list
 
 def make_train_data(model, text_dir, data_path, category, mode):
-    for i, c in category.items():
+    for c in category:
         path_list = get_text_path_list(text_dir, c)
         feature = []
-        for p in path_list:
-            trace(mode,"infer", p)
+        leng = len(path_list) - 1
+        for i, p in enumerate(path_list):
+            trace(mode,"infer", i, "/", leng)
             vec_list = get_vector(p, model, mode)
             if not len(vec_list) == 0:
                 feature.extend(vec_list)

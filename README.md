@@ -5,7 +5,6 @@
 ~~~bash
 $ wget http://www.rondhuit.com/download/ldcc-20140209.tar.gz
 $ tar xvzf ldcc-20140209.tar.gz
-$ mkdir data && mv text/ data/
 ~~~
 
 - environment
@@ -25,9 +24,8 @@ $ vim util/constants.py
 ~~~bash
 $ python wakati.py
 $ python train_w2v_model.py
-$ fasttext {mecab wakati file path}
-$ fasttext {juman++ wakati file path}
+$ fasttext skipgram -input {mecab/juman wakati} -output model -dim 200
 $ python make_vec_data.py
-$ python -u evaluate.py > result
+$ python -u evaluate.py
 ~~~
 
