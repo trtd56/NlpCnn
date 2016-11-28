@@ -3,8 +3,9 @@
 
 from gensim.models import word2vec
 
-from util.functions import trace, check_directory
 from util.constants import *
+from util.functions import check_directory
+from util.functions import trace
 
 
 if __name__ == '__main__':
