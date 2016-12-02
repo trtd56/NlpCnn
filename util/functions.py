@@ -21,6 +21,19 @@ def check_directory(path_list):
         if not os.path.isdir(dir_path):
             os.makedirs(dir_path)
 
+def get_text_file_path(text_dir_path):
+    text_dir = os.listdir(text_dir_path)
+    path_list = []
+    for files in text_dir:
+        try:
+            file_list = os.listdir(text_dir_path + files)
+            for f in file_list:
+                full_path = text_dir_path + files + "/" + f
+                path_list.append(full_path)
+        except NotADirectoryError:
+            pass
+    return path_list
+
 def wakati(path, mode):
     out = ""
     text = codecs.open(path,"r","utf-8").readlines()[2:] # Delete URL & date

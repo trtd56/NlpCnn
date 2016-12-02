@@ -5,22 +5,9 @@ import os
 
 from util.constants import *
 from util.functions import check_directory
+from util.functions import get_text_file_path
 from util.functions import trace
 from util.functions import wakati
-
-
-def get_text_file_path(text_dir_path):
-    text_dir = os.listdir(text_dir_path)
-    path_list = []
-    for files in text_dir:
-        try:
-            file_list = os.listdir(text_dir_path + files)
-            for f in file_list:
-                full_path = text_dir_path + files + "/" + f
-                path_list.append(full_path)
-        except NotADirectoryError:
-            pass
-    return path_list
 
 
 def wakati_all_text(path_list, mode):

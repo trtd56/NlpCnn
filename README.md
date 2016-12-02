@@ -1,10 +1,12 @@
 # TODO
 
-- download livedoor news corpus
+- download corpus
 
 ~~~bash
 $ wget http://www.rondhuit.com/download/ldcc-20140209.tar.gz
 $ tar xvzf ldcc-20140209.tar.gz
+$ wget https://dumps.wikimedia.org/jawiki/latest/jawiki-latest-abstract.xml
+$ tar xvzf 
 ~~~
 
 - environment
