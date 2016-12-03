@@ -58,3 +58,7 @@ def replace_head2jumanpp(line):
     line = line.replace("@","")
     line = line.replace("#","")
     return line
+
+def write_file(out_path, data):
+    with codecs.open(out_path, "w", 'utf-8') as f:
+        f.write(data)

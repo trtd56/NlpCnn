@@ -8,6 +8,7 @@ from util.functions import check_directory
 from util.functions import get_text_file_path
 from util.functions import trace
 from util.functions import wakati
+from util.functions import write_file
 
 
 def wakati_all_text(path_list, mode):
@@ -19,9 +20,6 @@ def wakati_all_text(path_list, mode):
     return out
 
 
-def write_file(out_path, data):
-    with codecs.open(out_path, "w", 'utf-8') as f:
-        f.write(data)
 
 if __name__ == '__main__':
 
