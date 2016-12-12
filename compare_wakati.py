@@ -23,6 +23,9 @@ def wakati_2_method(path):
     juman_sp = JUMAN_SEP.analysis(replace_head2jumanpp(samp_line))
     juman_sp = "/".join([i.midasi for i in juman_sp.mrph_list()])
     print()
+    print("=== path ===")
+    print(path)
+    print()
     print("=== mecab split ===")
     print(mecab_sp)
     print()
@@ -37,6 +40,6 @@ if __name__ == '__main__':
 
     trace("read text file")
     path_list = get_text_file_path(CORPUS_DIR)
-    samp_path = random.sample(path_list, 10)
+    samp_path = random.sample(path_list, 100)
     for path in samp_path:
         wakati_2_method(path)

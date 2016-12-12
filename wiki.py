@@ -4,6 +4,8 @@ import codecs
 import MeCab
 from pyknp import Jumanpp
 from gensim.models import word2vec
+from multiprocessing import Pool
+from multiprocessing import Process
 
 from util.constants import *
 from util.functions import trace
@@ -15,26 +17,36 @@ from util.functions import write_file
 MECAB_SEP = MeCab.Tagger("-Owakati")
 JUMAN_SEP = Jumanpp()
 
-def wakati_jawiki(path, mode):
-    out  = ""
-    count = 0
+def read_jawiki(path):
+    docs  = []
     for line in open(path, 'r', encoding='utf-8'):
         if "<abstract>" and "。" in line and len(line) > JAWIKI_MIN_COUNT:
             line = line.replace("</abstract>","")
             line = line.replace("<abstract>","")
-            count += 1
-            trace(mode,"wakati",count)
-            if mode == "mecab":
-                if not len(line) == 0:
-                    text_sp = MECAB_SEP.parse(line)
-                    out += text_sp
-            elif mode == "juman":
-                line = replace_head2jumanpp(line)
-                if not len(line) == 0:
-                    #trace("juman", line)
-                    text_sp = JUMAN_SEP.analysis(line)
-                    text_sp = " ".join([i.midasi for i in text_sp.mrph_list()]) + "\n"
-                    out += text_sp
+            line = replace_head2jumanpp(line)
+            if not len(line) == 0:
+                docs.append(line)
+    return docs
+
+def split_mecab(line):
+        return MECAB_SEP.parse(line)
+
+def split_juman(line):
+        line = line.replace("\n", "")
+        trace(line)
+        text_sp = JUMAN_SEP.analysis(line)
+        text_sp = " ".join([i.midasi for i in text_sp.mrph_list()]) + "\n"
+        return text_sp
+
+def multi(func, data):
+        p = Pool(MULTI)
+        result = p.map(func, data)
+        return result
+
+def bind(data):
+    out = ""
+    for i in data:
+        out += i
     return out
 
 
@@ -44,10 +56,23 @@ if __name__ == '__main__':
     dir_path = [WAKATI_MECAB_WIKI, WAKATI_JUMAN_WIKI, W2V_MECAB_MODEL_WIKI, W2V_JUMAN_MODEL_WIKI]
     check_directory(dir_path)
 
-    trace("read & wakati jawiki")
-    wakati_mecab = wakati_jawiki(JAWIKI_XML_PATH, "mecab")
+    trace("read jawiki file")
+    docs = read_jawiki(JAWIKI_XML_PATH)
+
+    trace("--- mecab ---")
+    trace("wakati")
+    wakati_mecab = multi(split_mecab, docs)
+    trace("bind")
+    wakati_mecab = bind(wakati_mecab)
+    trace("save")
     write_file(WAKATI_MECAB_WIKI, wakati_mecab)
-    wakati_juman = wakati_jawiki(JAWIKI_XML_PATH, "juman")
+
+    trace("--- juman ---")
+    trace("wakati")
+    wakati_juman = multi(split_juman, docs)
+    trace("bind")
+    wakati_juman = bind(wakati_juman)
+    trace("save")
     write_file(WAKATI_JUMAN_WIKI, wakati_juman)
 
     trace("load mecab wakati file")

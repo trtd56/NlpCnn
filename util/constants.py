@@ -1,4 +1,5 @@
 SEED                   = 123
+MULTI                  = 2
 UNIT                   = 200
 
 DATA_ROOT              = "./data/"
